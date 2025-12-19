@@ -209,7 +209,6 @@ public class CustomerDashboardController implements Initializable {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Car Rental Management System");
-            stage.setMaximized(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
