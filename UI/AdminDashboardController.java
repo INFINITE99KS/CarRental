@@ -264,7 +264,6 @@ public class AdminDashboardController implements Initializable {
             Stage stage = (Stage) adminLogoutButton.getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Car Rental Management System");
-            stage.setMaximized(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
