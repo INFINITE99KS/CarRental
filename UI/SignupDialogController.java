@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Account;
 import model.Customer;
+import model.DataManager;
 
 public class SignupDialogController {
 
@@ -59,6 +60,9 @@ public class SignupDialogController {
         try {
             Account newAccount = new Account(username, password, 'c');
             new Customer(name, email, newAccount);
+            
+            // Save data immediately
+            DataManager.saveAllData();
             
             showAlert("Account created successfully!\nYou can now login with username: " + username);
             

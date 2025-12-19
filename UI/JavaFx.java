@@ -11,8 +11,13 @@ public class JavaFx extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Setup initial data
-        setupInitialData();
+        // Load saved data first
+        DataManager.loadAllData();
+        
+        // If no data exists, setup initial data
+        if (Vehicle.allVehicles.isEmpty()) {
+            setupInitialData();
+        }
         
         // Load the main dashboard FXML
         Parent root = FXMLLoader.load(getClass().getResource("Dashboard.fxml"));
@@ -21,7 +26,11 @@ public class JavaFx extends Application {
         primaryStage.setTitle("Car Rental Management System");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
+        primaryStage.setMaximized(true);
         primaryStage.show();
+        
+        // Save data when closing
+        primaryStage.setOnCloseRequest(e -> DataManager.saveAllData());
     }
     
     private void setupInitialData() {

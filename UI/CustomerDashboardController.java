@@ -38,7 +38,7 @@ public class CustomerDashboardController implements Initializable {
     @FXML private TableColumn<Booking, String> bookingStatusColumn;
     
     @FXML private Button bookButton;
-    @FXML private Button refreshButton;
+    @FXML private Button cancelBookingButton;
     @FXML private Button logoutButton;
     
     private Customer currentCustomer;
@@ -156,6 +156,7 @@ public class CustomerDashboardController implements Initializable {
                 
                 loadVehicles();
                 loadBookings();
+                DataManager.saveAllData();
                 
             } catch (NumberFormatException e) {
                 showAlert("Please enter a valid number!");
@@ -166,9 +167,39 @@ public class CustomerDashboardController implements Initializable {
     }
 
     @FXML
-    void handleRefresh(ActionEvent event) {
-        loadVehicles();
-        loadBookings();
+    void handleCancelBooking(ActionEvent event) {
+        Booking selectedBooking = bookingsTable.getSelectionModel().getSelectedItem();
+        if (selectedBooking == null) {
+            showAlert("Please select a booking to cancel!");
+            return;
+        }
+        
+        if (!selectedBooking.isActive()) {
+            showAlert("This booking is already completed and cannot be cancelled!");
+            return;
+        }
+        
+        // Confirmation dialog
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Cancel Booking");
+        confirmAlert.setHeaderText("Cancel Booking Confirmation");
+        confirmAlert.setContentText("Are you sure you want to cancel this booking?\n" +
+                                   "Vehicle: " + selectedBooking.getBookedVehicle().getModel() + "\n" +
+                                   "Start Date: " + selectedBooking.getStartDate() + "\n" +
+                                   "End Date: " + selectedBooking.getEndDate());
+        
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Cancel the booking
+            selectedBooking.getBookedVehicle().setIsAvailable(true);
+            Booking.bookings.remove(selectedBooking);
+            
+            showAlert("Booking cancelled successfully!\nVehicle is now available for other customers.");
+            
+            loadVehicles();
+            loadBookings();
+            DataManager.saveAllData();
+        }
     }
 
     @FXML

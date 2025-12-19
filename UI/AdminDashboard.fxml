@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #1565c0, #1976d2); -fx-background-image: url('https://images.unsplash.com/photo-1441148345475-384ef9328d66?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1920&amp;q=80'); -fx-background-size: cover; -fx-background-position: center;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.AdminDashboardController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #1a1a1a, #2c2c2c); -fx-background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=3840&amp;q=80'); -fx-background-size: cover; -fx-background-position: center;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.AdminDashboardController">
    <top>
-      <VBox style="-fx-background-color: #2196f3;" BorderPane.alignment="CENTER">
+      <VBox style="-fx-background-color: rgba(0,0,0,0.7);" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="20.0">
                <children>
@@ -45,7 +45,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="refreshVehiclesButton" mnemonicParsing="false" onAction="#handleRefreshVehicles" style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-background-radius: 5;" text="Refresh">
+                              <Button fx:id="removeVehicleButton" mnemonicParsing="false" onAction="#handleRemoveVehicle" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 5;" text="Remove Vehicle">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
