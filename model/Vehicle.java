@@ -25,7 +25,7 @@ public abstract class Vehicle  implements Comparable<Vehicle>{
 
     // Encapsulation: Getter and Setters
     public String getModel(){return model;}
-    public String getlicenseNumver(){return licenseNumber;}
+    public String getlicenseNumber(){return licenseNumber;}
     public double getDailyRate(){return dailyRate;}
     public boolean getIsAvailable(){return isAvailable;}
     public int getVehicleId(){return vehicleId;}

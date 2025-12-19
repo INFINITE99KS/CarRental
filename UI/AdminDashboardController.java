@@ -67,7 +67,7 @@ public class AdminDashboardController implements Initializable {
         adminVehicleModelColumn.setCellValueFactory(data -> 
             new SimpleStringProperty(data.getValue().getModel()));
         adminVehicleLicenseColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getlicenseNumver()));
+            new SimpleStringProperty(data.getValue().getlicenseNumber()));
         adminVehicleRateColumn.setCellValueFactory(data -> 
             new SimpleStringProperty("$" + data.getValue().getDailyRate() + "/day"));
         adminVehicleStatusColumn.setCellValueFactory(data -> 
@@ -194,7 +194,7 @@ public class AdminDashboardController implements Initializable {
                 
                 // Check if license already exists
                 for (Vehicle v : Vehicle.allVehicles) {
-                    if (v.getlicenseNumver().equals(license)) {
+                    if (v.getlicenseNumber().equals(license)) {
                         showAlert("License number already exists!");
                         return;
                     }
@@ -241,7 +241,7 @@ public class AdminDashboardController implements Initializable {
         confirmAlert.setTitle("Confirm Removal");
         confirmAlert.setHeaderText("Remove Vehicle");
         confirmAlert.setContentText("Are you sure you want to remove:\n" + 
-                                   selectedVehicle.getModel() + " (" + selectedVehicle.getlicenseNumver() + ")?");
+                                   selectedVehicle.getModel() + " (" + selectedVehicle.getlicenseNumber() + ")?");
         
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {

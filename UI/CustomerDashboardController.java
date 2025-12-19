@@ -64,7 +64,7 @@ public class CustomerDashboardController implements Initializable {
         vehicleModelColumn.setCellValueFactory(data -> 
             new SimpleStringProperty(data.getValue().getModel()));
         vehicleLicenseColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getlicenseNumver()));
+            new SimpleStringProperty(data.getValue().getlicenseNumber()));
         vehicleRateColumn.setCellValueFactory(data -> 
             new SimpleStringProperty("$" + data.getValue().getDailyRate() + "/day"));
         vehicleStatusColumn.setCellValueFactory(data -> 
