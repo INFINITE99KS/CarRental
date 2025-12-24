@@ -3,21 +3,33 @@ package model;
 import java.io.*;
 import java.time.LocalDate;
 
+// Data Persistence Layer
+// This class handles all File I/O operations.
+// It saves the state of the application (Customers, Vehicles, Bookings) to CSV files
+// and reloads them when the application starts.
 public class DataManager {
+
+    // Define the folder where data will be stored.
     private static final String DATA_FOLDER = "data/";
 
-    // CHANGED: Files are now .csv (Excel/Spreadsheet compatible)
+    // Define file paths. We use .csv (Comma Separated Values) because
+    // it is simple, text-based, and can be opened in Excel for debugging.
     private static final String CUSTOMERS_FILE = DATA_FOLDER + "customers.csv";
     private static final String VEHICLES_FILE = DATA_FOLDER + "vehicles.csv";
     private static final String BOOKINGS_FILE = DATA_FOLDER + "bookings.csv";
 
-    // Ensure data directory exists
+    // Static Initialization Block
+    // Runs once when the class is loaded. Ensures the "data/" directory exists.
+    // If we didn't do this, the file writers would crash on a fresh installation.
     static {
         File dataDir = new File(DATA_FOLDER);
         if (!dataDir.exists()) {
-            dataDir.mkdirs();
+            dataDir.mkdirs(); // Create directory if missing
         }
     }
+
+    // --- Public Facade Methods ---
+    // These are the simple buttons the rest of the app pushes to save/load everything.
 
     public static void saveAllData() {
         saveCustomers();
@@ -33,12 +45,15 @@ public class DataManager {
         System.out.println("All data loaded successfully from CSV!");
     }
 
-    // --- CUSTOMERS ---
+    // --- CUSTOMERS SAVING/LOADING ---
 
     private static void saveCustomers() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(CUSTOMERS_FILE))) {
             for (Customer customer : Customer.customers) {
-                // SAFETY: Replace commas in user text with spaces to prevent file errors
+                // SAFETY CRITICAL:
+                // Since we use commas as delimiters, if a user puts a comma in their name
+                // (e.g., "Doe, John"), it breaks the file format.
+                // We use .replace(",", " ") to sanitize inputs before writing.
                 writer.println(customer.getCustomerId() + "," +
                         customer.getName().replace(",", " ") + "," +
                         customer.getEmail().replace(",", " ") + "," +
@@ -53,15 +68,15 @@ public class DataManager {
 
     private static void loadCustomers() {
         File file = new File(CUSTOMERS_FILE);
-        if (!file.exists()) return;
+        if (!file.exists()) return; // Stop if no data exists yet
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            Customer.customers.clear();
+            Customer.customers.clear(); // Clear memory to avoid duplicates
 
             while ((line = reader.readLine()) != null) {
-                // SPLIT by comma
                 String[] parts = line.split(",");
+                // Basic validation to ensure the line isn't corrupted
                 if (parts.length >= 6) {
                     String name = parts[1];
                     String email = parts[2];
@@ -69,6 +84,7 @@ public class DataManager {
                     String password = parts[4];
                     char role = parts[5].charAt(0);
 
+                    // Reconstruct the Account and Customer objects in memory
                     Account account = new Account(username, password, role);
                     new Customer(name, email, account);
                 }
@@ -78,13 +94,16 @@ public class DataManager {
         }
     }
 
-    // --- VEHICLES ---
+    // --- VEHICLES SAVING/LOADING ---
+    // This is trickier because we have different types (Car, Bike, Van) with different data fields.
 
     private static void saveVehicles() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(VEHICLES_FILE))) {
             for (Vehicle vehicle : Vehicle.allVehicles) {
+                // 1. Get the type dynamically (Car, Bike, etc.)
                 String type = vehicle.getClass().getSimpleName();
 
+                // 2. Write the common data (ID, Model, Rate, etc.)
                 writer.println(type + "," +
                         vehicle.getVehicleId() + "," +
                         vehicle.getModel().replace(",", " ") + "," +
@@ -92,7 +111,8 @@ public class DataManager {
                         vehicle.getDailyRate() + "," +
                         vehicle.getIsAvailable());
 
-                // Save specific data
+                // 3. Polymorphic Saving:
+                // Check specific type and write a second line with unique data.
                 if (vehicle instanceof Car) {
                     writer.println("CAR_DATA," + ((Car) vehicle).getIsAutmatic());
                 } else if (vehicle instanceof Bike) {
@@ -117,7 +137,7 @@ public class DataManager {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
 
-                // Ensure we are reading a main vehicle line, not a data line
+                // Check if this is a "Parent" line (starts with Car, Bike, or Van)
                 if (parts.length >= 6 && !line.startsWith("CAR_DATA") &&
                         !line.startsWith("BIKE_DATA") && !line.startsWith("VAN_DATA")) {
 
@@ -127,15 +147,16 @@ public class DataManager {
                     double rate = Double.parseDouble(parts[4]);
                     boolean available = Boolean.parseBoolean(parts[5]);
 
-                    // Read the next line for specific details
+                    // Read the NEXT line immediately to get the specific data (Automatic, Helmet, etc.)
                     String dataLine = reader.readLine();
                     if (dataLine != null) {
                         String[] dataParts = dataLine.split(",");
 
+                        // Factory Logic: Instantiate the correct subclass
                         if ("Car".equals(type)) {
                             boolean isAutomatic = Boolean.parseBoolean(dataParts[1]);
                             Car car = new Car(model, license, rate, isAutomatic);
-                            car.setIsAvailable(available);
+                            car.setIsAvailable(available); // Restore availability state
                         } else if ("Bike".equals(type)) {
                             boolean helmet = Boolean.parseBoolean(dataParts[1]);
                             Bike bike = new Bike(model, license, rate, helmet);
@@ -153,11 +174,14 @@ public class DataManager {
         }
     }
 
-    // --- BOOKINGS ---
+    // --- BOOKINGS SAVING/LOADING ---
+    // Bookings link Customers and Vehicles together.
+    // In the file, we only save the IDs. In memory, we need the actual Objects.
 
     private static void saveBookings() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(BOOKINGS_FILE))) {
             for (Booking booking : Booking.bookings) {
+                // Save IDs instead of full objects to keep file small
                 writer.println(booking.getBookingId() + "," +
                         booking.getStartDate() + "," +
                         booking.getEndDate() + "," +
@@ -188,17 +212,23 @@ public class DataManager {
                     int vehicleId = Integer.parseInt(parts[4]);
                     boolean isActiveFromFile = Boolean.parseBoolean(parts[5]);
 
+                    // RELATIONAL MAPPING:
+                    // We have IDs (e.g., Customer #5, Vehicle #2).
+                    // We must find the actual Java objects in the lists we just loaded.
                     Customer customer = findCustomerById(customerId);
                     Vehicle vehicle = findVehicleById(vehicleId);
 
                     if (customer != null && vehicle != null) {
-                        // Create Booking (Default is Active)
+                        // Recreate the Booking Object
                         Booking booking = new Booking(startDate, endDate, customer, vehicle);
 
-                        // Force status from file (The fix for your "Active" bug)
+                        // Restore State:
+                        // 1. Set booking active/inactive status
                         booking.setIsActive(isActiveFromFile);
 
-                        // Sync vehicle availability
+                        // 2. Sync Vehicle Availability
+                        // If the booking is still active, the car MUST be unavailable.
+                        // If the booking is done, the car MUST be available.
                         if (!isActiveFromFile) {
                             vehicle.setIsAvailable(true);
                         } else {
@@ -212,13 +242,14 @@ public class DataManager {
         }
     }
 
-    // --- HELPERS ---
+    // --- HELPER METHODS ---
+    // These act like "Database Lookups" to find objects by their unique ID.
 
     private static Customer findCustomerById(int id) {
         for (Customer customer : Customer.customers) {
             if (customer.getCustomerId() == id) return customer;
         }
-        return null;
+        return null; // Should ideally handle this case (e.g., deleted users)
     }
 
     private static Vehicle findVehicleById(int id) {

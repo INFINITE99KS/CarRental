@@ -112,6 +112,7 @@ public class AdminDashboardController implements Initializable {
 
     private void loadVehicles() {
         // Convert the ArrayList to an ObservableList so the UI can watch it
+        java.util.Collections.sort(Vehicle.allVehicles);
         adminVehiclesTable.setItems(FXCollections.observableArrayList(Vehicle.allVehicles));
     }
 
