@@ -103,6 +103,7 @@ public class CustomerDashboardController implements Initializable {
                 availableVehicles.add(vehicle);
             }
         }
+        java.util.Collections.sort(availableVehicles);
         vehiclesTable.setItems(availableVehicles);
     }
 
