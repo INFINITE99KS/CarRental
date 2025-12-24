@@ -39,6 +39,7 @@ public class CustomerDashboardController implements Initializable {
     @FXML private TableColumn<Vehicle, String> vehicleLicenseColumn;
     @FXML private TableColumn<Vehicle, String> vehicleRateColumn;
     @FXML private TableColumn<Vehicle, String> vehicleStatusColumn;
+    @FXML private TableColumn<Vehicle, String> taxRate;
 
     // Booking Table Setup
     @FXML private TableView<Booking> bookingsTable;
@@ -80,6 +81,8 @@ public class CustomerDashboardController implements Initializable {
         vehicleLicenseColumn.setCellValueFactory(new PropertyValueFactory<>("licenseNumber"));
         vehicleRateColumn.setCellValueFactory(new PropertyValueFactory<>("rateFormatted")); // Looks for getRateFormatted()
         vehicleStatusColumn.setCellValueFactory(new PropertyValueFactory<>("statusFormatted")); // Looks for getStatusFormatted()
+        // Looks for getTaxRate(), returns the tax rate of the designated vehicle.
+        taxRate.setCellValueFactory(new PropertyValueFactory<>("taxRate"));
     }
 
      // Configures the Booking table columns.
@@ -174,6 +177,7 @@ public class CustomerDashboardController implements Initializable {
                 showAlert("Booking Confirmed!\n" +
                         "Vehicle: " + selectedVehicle.getModel() + "\n" +
                         "Duration: " + days + " days\n" +
+                        "Tax Rate: " + selectedVehicle.getTaxRate() +"\n"+
                         "Total Cost: $" + cost + "\n" +
                         "Start Date: " + startDate + "\n" +
                         "End Date: " + endDate);

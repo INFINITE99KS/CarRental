@@ -3,7 +3,7 @@ package model;
 // Concrete Subclass (OOP Concept: Inheritance)
 // The 'Bike' class inherits all the common attributes (ID, Model, License, Rate)
 // from the abstract 'Vehicle' class but adds bike-specific features.
-public class Bike extends Vehicle {
+public class Bike extends Vehicle{
 
     // Unique Attribute (Specialization)
     // Only Bikes track whether a helmet is provided.
@@ -23,23 +23,20 @@ public class Bike extends Vehicle {
         this.helmetInclude = helmetInclude;
     }
 
+    public String getTaxRate()
+    {
+        return "10%";
+    }
+    public double getTaxRateFraction()
+    {
+        return bikeTax;
+    }
+
     // Getter for the specific attribute.
     // Used by:
     // 1. DataManager: To save this specific detail to the CSV file.
     // 2. AdminDashboard: To display "Helmet: Yes/No" in the UI.
     public boolean getHelmetInclude(){
         return helmetInclude;
-    }
-
-    // Overridden Method (OOP Concept: Polymorphism)
-    // We MUST implement this abstract method from 'Vehicle'.
-    //
-    // Design Note:
-    // Currently, this just calculates (days * rate). However, if we wanted to
-    // add a $5 fee for the helmet later, we would only need to change the code
-    // right here, and it would automatically apply to all Bike rentals.
-    @Override
-    public double calculateRentalCost(int days, double dailyRate){
-        return days * dailyRate;
     }
 }

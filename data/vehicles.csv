@@ -1,8 +1,8 @@
-Car,0,Toyota Corolla,ABC-123,100.0,true
-CAR_DATA,true
-Car,1,BMW X5,BMW-999,200.0,true
-CAR_DATA,true
 Bike,2,Honda Bike,MOTO-55,50.0,true
 BIKE_DATA,true
+Car,0,Toyota Corolla,ABC-123,100.0,true
+CAR_DATA,true
 Van,3,Mercedes Van,VAN-001,150.0,true
 VAN_DATA,1000.0
+Car,1,BMW X5,BMW-999,200.0,true
+CAR_DATA,true

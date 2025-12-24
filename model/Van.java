@@ -3,7 +3,7 @@ package model;
 // Concrete Subclass (OOP Concept: Inheritance)
 // The Van class extends the abstract 'Vehicle' class.
 // It inherits common attributes (model, rate, availability) but adds its own specific data.
-public class Van extends Vehicle {
+public class Van extends Vehicle{
 
     // Unique Attribute (Specialization)
     // Only Vans track "Load Capacity". Cars and Bikes do not need this field.
@@ -28,13 +28,12 @@ public class Van extends Vehicle {
         return loadCapacity;
     }
 
-    // Overridden Method (OOP Concept: Polymorphism)
-    // We MUST implement this method because 'Vehicle' defined it as abstract.
-    // Even though the calculation is simple now, having it overridden here means
-    // we could easily change logic later (e.g., add a fee for high load capacity)
-    // without breaking the rest of the system.
-    @Override
-    public double calculateRentalCost(int days, double dailyRate) {
-        return days * dailyRate;
+    public String getTaxRate()
+    {
+        return "15%";
+    }
+    public double getTaxRateFraction()
+    {
+        return vanTax;
     }
 }

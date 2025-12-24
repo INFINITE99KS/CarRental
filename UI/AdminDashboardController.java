@@ -30,6 +30,7 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn<Vehicle, String> adminVehicleLicenseColumn;
     @FXML private TableColumn<Vehicle, String> adminVehicleRateColumn;
     @FXML private TableColumn<Vehicle, String> adminVehicleStatusColumn;
+    @FXML private TableColumn<Vehicle, String> taxRate;
     @FXML private Button addVehicleButton;
     @FXML private Button removeVehicleButton;
 
@@ -51,6 +52,7 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn<Booking, String> adminBookingStatusColumn;
 
     @FXML private Button adminLogoutButton;
+    @FXML private Label actualRevenue;
 
     // This method runs automatically when the window opens
     @Override
@@ -59,6 +61,7 @@ public class AdminDashboardController implements Initializable {
         setupVehiclesTable();
         setupCustomersTable();
         setupBookingsTable();
+        handleRevenue();
 
         // 2. Load the actual data into the tables
         loadAllData();
@@ -80,6 +83,8 @@ public class AdminDashboardController implements Initializable {
         adminVehicleRateColumn.setCellValueFactory(new PropertyValueFactory<>("rateFormatted"));
         // Looks for getStatusFormatted() - returns "Available" or "Rented"
         adminVehicleStatusColumn.setCellValueFactory(new PropertyValueFactory<>("statusFormatted"));
+        // Looks for getTaxRate(), returns the tax rate of the designated vehicle.
+        taxRate.setCellValueFactory(new PropertyValueFactory<>("taxRate"));
     }
 
     private void setupCustomersTable() {
@@ -250,5 +255,17 @@ public class AdminDashboardController implements Initializable {
     // Helper method to show simple popup messages
     private void showAlert(String message) {
         new Alert(Alert.AlertType.INFORMATION, message).showAndWait();
+    }
+
+    void handleRevenue()
+    {
+        double calculatedRevenue = 0;
+        for(Booking book:Booking.bookings)
+        {
+            String getCost = book.getCostFormatted();
+            getCost = getCost.substring(1, getCost.length()-1);
+            calculatedRevenue += Double.parseDouble(getCost);
+        }
+        actualRevenue.setText(String.format("$%.2f", calculatedRevenue));
     }
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 //
 // Implements Comparable<Vehicle> (Project Requirement: Generic Sort)
 // This interface allows us to sort a list of vehicles automatically (e.g., by price).
-public abstract class Vehicle implements Comparable<Vehicle> {
+public abstract class Vehicle implements Comparable<Vehicle>, Taxable {
 
     // Encapsulation: All fields are private to protect data integrity.
     // They can only be accessed via public Getter/Setter methods.
@@ -39,7 +39,9 @@ public abstract class Vehicle implements Comparable<Vehicle> {
     // Abstract Method (OOP Concept: Polymorphism)
     // This method has NO body. It forces every subclass (Car, Bike, Van)
     // to provide its own implementation of how to calculate cost.
-    public abstract double calculateRentalCost(int days, double dailyRate);
+    public double calculateRentalCost(int days, double dailyRate) {
+        return days * dailyRate*(1+getTaxRateFraction());
+    }
 
     // --- Encapsulation: Getters and Setters ---
 
