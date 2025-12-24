@@ -9,38 +9,28 @@ public class DataManager {
     private static final String CUSTOMERS_FILE = DATA_FOLDER + "customers.txt";
     private static final String VEHICLES_FILE = DATA_FOLDER + "vehicles.txt";
     private static final String BOOKINGS_FILE = DATA_FOLDER + "bookings.txt";
-    
-    // إنشاء مجلد البيانات إذا لم يكن موجود
+
     static {
         File dataDir = new File(DATA_FOLDER);
         if (!dataDir.exists()) {
             dataDir.mkdirs();
         }
     }
-    
-    /**
-     * حفظ كل البيانات
-     */
+
     public static void saveAllData() {
         saveCustomers();
         saveVehicles();
         saveBookings();
         System.out.println("All data saved successfully!");
     }
-    
-    /**
-     * تحميل كل البيانات
-     */
+
     public static void loadAllData() {
         loadCustomers();
         loadVehicles();
         loadBookings();
         System.out.println("All data loaded successfully!");
     }
-    
-    /**
-     * حفظ العملاء
-     */
+
     private static void saveCustomers() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(CUSTOMERS_FILE))) {
             for (Customer customer : Customer.customers) {
@@ -55,10 +45,7 @@ public class DataManager {
             System.err.println("Error saving customers: " + e.getMessage());
         }
     }
-    
-    /**
-     * تحميل العملاء
-     */
+
     private static void loadCustomers() {
         File file = new File(CUSTOMERS_FILE);
         if (!file.exists()) return;
@@ -85,10 +72,7 @@ public class DataManager {
             System.err.println("Error loading customers: " + e.getMessage());
         }
     }
-    
-    /**
-     * حفظ المركبات
-     */
+
     private static void saveVehicles() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(VEHICLES_FILE))) {
             for (Vehicle vehicle : Vehicle.allVehicles) {
@@ -116,10 +100,7 @@ public class DataManager {
             System.err.println("Error saving vehicles: " + e.getMessage());
         }
     }
-    
-    /**
-     * تحميل المركبات
-     */
+
     private static void loadVehicles() {
         File file = new File(VEHICLES_FILE);
         if (!file.exists()) return;
@@ -165,9 +146,7 @@ public class DataManager {
         }
     }
     
-    /**
-     * حفظ الحجوزات (مبسط)
-     */
+
     private static void saveBookings() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(BOOKINGS_FILE))) {
             for (Booking booking : Booking.bookings) {
@@ -183,17 +162,15 @@ public class DataManager {
         }
     }
     
-    /**
-     * تحميل الحجوزات (مبسط)
-     */
+
     private static void loadBookings() {
         File file = new File(BOOKINGS_FILE);
         if (!file.exists()) return;
-        
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             Booking.bookings.clear(); // مسح البيانات الحالية
-            
+
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
                 if (parts.length >= 6) {
@@ -201,17 +178,26 @@ public class DataManager {
                     LocalDate endDate = LocalDate.parse(parts[2]);
                     int customerId = Integer.parseInt(parts[3]);
                     int vehicleId = Integer.parseInt(parts[4]);
-                    boolean isActive = Boolean.parseBoolean(parts[5]);
-                    
+                    boolean isActiveFromFile = Boolean.parseBoolean(parts[5]); // Read status from file
+
                     // البحث عن العميل والمركبة
                     Customer customer = findCustomerById(customerId);
                     Vehicle vehicle = findVehicleById(vehicleId);
-                    
+
                     if (customer != null && vehicle != null) {
+                        // 1. Create the booking (Constructor sets isActive = true by default)
                         Booking booking = new Booking(startDate, endDate, customer, vehicle);
-                        if (!isActive) {
-                            // إذا كان الحجز غير نشط، اجعل المركبة متاحة
+
+                        // 2. CRITICAL FIX: Override the status using the value from the file
+                        booking.setIsActive(isActiveFromFile);
+
+                        // 3. Sync vehicle availability
+                        if (!isActiveFromFile) {
+                            // If the booking is essentially "History" (false), ensure vehicle is free
                             vehicle.setIsAvailable(true);
+                        } else {
+                            // If it is actually "Active", ensure vehicle is taken
+                            vehicle.setIsAvailable(false);
                         }
                     }
                 }
@@ -221,9 +207,7 @@ public class DataManager {
         }
     }
     
-    /**
-     * البحث عن عميل بالـ ID
-     */
+
     private static Customer findCustomerById(int id) {
         for (Customer customer : Customer.customers) {
             if (customer.getCustomerId() == id) {
@@ -232,10 +216,7 @@ public class DataManager {
         }
         return null;
     }
-    
-    /**
-     * البحث عن مركبة بالـ ID
-     */
+
     private static Vehicle findVehicleById(int id) {
         for (Vehicle vehicle : Vehicle.allVehicles) {
             if (vehicle.getVehicleId() == id) {
@@ -244,10 +225,7 @@ public class DataManager {
         }
         return null;
     }
-    
-    /**
-     * الحصول على كلمة المرور من Account
-     */
+
     private static String getPassword(Account account) {
         return account.getPassword();
     }

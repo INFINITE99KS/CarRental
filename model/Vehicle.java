@@ -31,6 +31,15 @@ public abstract class Vehicle  implements Comparable<Vehicle>{
     public int getVehicleId(){return vehicleId;}
     public void setVehicleId(int id){vehicleId =id;}
     public void setIsAvailable(boolean available){ this.isAvailable = available;}
+    public String getType() {
+        return this.getClass().getSimpleName();
+    }
+    public String getRateFormatted() {
+        return String.format("$%.2f/day", dailyRate);
+    }
+    public String getStatusFormatted() {
+        return isAvailable ? "Available" : "Rented";
+    }
     
    @Override
     public int compareTo(Vehicle otherVehicle) { 

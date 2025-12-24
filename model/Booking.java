@@ -18,8 +18,8 @@ public class Booking {
         this.endDate = endDate;
         this.customer = customer;
         this.bookedVehicle = bookedVehicle;
-        
-        // تغيير حالة السيارة لـ "محجوزة"
+
+        // Changes it to booked.
         bookedVehicle.setIsAvailable(false);
         
         this.isActive = true;
@@ -28,28 +28,54 @@ public class Booking {
     }
 
 
-    static void checkExpiry() {
+    public static void checkExpiry() {
+        System.out.println("--- CHECKING EXPIRY ---");
+        System.out.println("Today's Date: " + LocalDate.now());
+
         for (Booking book : bookings) {
+            // Print details for every active booking
+            if (book.isActive()) {
+                System.out.println("Checking Booking ID: " + book.getBookingId());
+                System.out.println("   End Date: " + book.getEndDate());
+                System.out.println("   Is Today After End Date? " + LocalDate.now().isAfter(book.getEndDate()));
 
-            if (book.isActive && LocalDate.now().isAfter(book.getEndDate())) {
-                book.isActive = false;
-                
-
-                book.getCustomer().returnVehicle(book.getBookedVehicle());
-                
-                System.out.println("Booking " + book.getBookingId() + " expired. Vehicle returned.");
+                if (LocalDate.now().isAfter(book.getEndDate())) {
+                    book.setIsActive(false); // Use the setter I gave you
+                    book.getCustomer().returnVehicle(book.getBookedVehicle());
+                    System.out.println("   -> EXPIRED. Status changed to Completed.");
+                } else {
+                    System.out.println("   -> ACTIVE. Not yet expired.");
+                }
             }
         }
+        System.out.println("-----------------------");
     }
 
-    // --- Public Getters ---
+    // Public Getters.
     public LocalDate getStartDate() { return startDate; }
     public LocalDate getEndDate() { return endDate; }
     public Vehicle getBookedVehicle() { return bookedVehicle; }
     public Customer getCustomer() { return customer; }
     public int getBookingId() { return bookingID; }
     public boolean isActive() { return isActive; }
+    public String getVehicleModel() {
+        return bookedVehicle.getModel();
+    }
+    public String getCostFormatted() {
+        // Calculate days using simple subtraction (No ChronoUnit needed)
+        long days = endDate.toEpochDay() - startDate.toEpochDay();
 
+        if (days <= 0) days = 1; // Minimum charge is 1 day
+
+        double cost = bookedVehicle.calculateRentalCost((int) days, bookedVehicle.getDailyRate());
+        return String.format("$%.2f", cost);
+    }
+    public String getStatusFormatted() {
+        return isActive ? "Active" : "Completed";
+    }
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
     public String displayInfo() {
         return ("Booking ID: " + bookingID +

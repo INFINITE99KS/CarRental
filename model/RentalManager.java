@@ -27,46 +27,4 @@ public class RentalManager {
             Vehicle.allVehicles.get(i).setVehicleId(used--);
         }
     }
-
-    public Vehicle findVehicleById(int id, ArrayList<Vehicle> vehicles){
-        if (vehicles.isEmpty()) return null;
-
-
-        for(Vehicle vehicle : vehicles) {
-            if (vehicle.getVehicleId() == id) {
-                return vehicle;
-            }
-        }
-        return null;
-    }
-
-    public String displayAllVehicles(){
-        String content = "";
-
-        if(Vehicle.allVehicles.size() != 0) {
-            for (int i = 0; i < Vehicle.allVehicles.size(); i++) {
-                content +=  Vehicle.allVehicles.get(i).displayInfo() + "\n" ;
-            }
-        }
-        else{
-            content = "There are no vehicles";
-        }
-
-        return content;
-    }
-
-    public String displayAllCustomers(){
-        String content = "";
-
-        if(Customer.customers.size() != 0) {
-            for (int i = 0; i < Customer.customers.size(); i++) {
-                content +=  Customer.customers.get(i).displayInfo() + "\n" ;
-            }
-        }
-        else{
-            content = "There are no customers";
-        }
-
-        return content;
-    }
 }

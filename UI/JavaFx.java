@@ -13,7 +13,13 @@ public class JavaFx extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Load saved data first
         DataManager.loadAllData();
-        
+
+        // Updates Bookings.
+        Booking.checkExpiry();
+
+        // Re-saves the data.
+        DataManager.saveAllData();
+
         // If no data exists, setup initial data
         if (Vehicle.allVehicles.isEmpty()) {
             setupInitialData();

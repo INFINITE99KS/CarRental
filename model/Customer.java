@@ -63,9 +63,4 @@ public class Customer {
         vehicle.setIsAvailable(true);
         System.out.println("Vehicle returned by customer: " + this.name);
     }
-    
-
-    public String displayInfo() {
-        return "ID: " + customerId + " | Name: " + name + " | Email: " + email;
-    }
 }
