@@ -1,6 +1,5 @@
 package UI;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.*;
@@ -18,11 +18,13 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+// Controller class for the Admin Dashboard UI
+// Handles Vehicle management, Customer viewing, and Booking history
 public class AdminDashboardController implements Initializable {
 
-    // Vehicles Tab
+    // --- Vehicles Tab Components linked to FXML ---
     @FXML private TableView<Vehicle> adminVehiclesTable;
-    @FXML private TableColumn<Vehicle, String> adminVehicleIdColumn;
+    @FXML private TableColumn<Vehicle, Integer> adminVehicleIdColumn;
     @FXML private TableColumn<Vehicle, String> adminVehicleTypeColumn;
     @FXML private TableColumn<Vehicle, String> adminVehicleModelColumn;
     @FXML private TableColumn<Vehicle, String> adminVehicleLicenseColumn;
@@ -30,225 +32,199 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn<Vehicle, String> adminVehicleStatusColumn;
     @FXML private Button addVehicleButton;
     @FXML private Button removeVehicleButton;
-    @FXML private Button refreshVehiclesButton;
-    
-    // Customers Tab
+
+    // --- Customers Tab Components linked to FXML ---
     @FXML private TableView<Customer> customersTable;
-    @FXML private TableColumn<Customer, String> customerIdColumn;
+    @FXML private TableColumn<Customer, Integer> customerIdColumn;
     @FXML private TableColumn<Customer, String> customerNameColumn;
     @FXML private TableColumn<Customer, String> customerEmailColumn;
     @FXML private TableColumn<Customer, String> customerUsernameColumn;
-    
-    // Bookings Tab
+
+    // --- Bookings Tab Components linked to FXML ---
     @FXML private TableView<Booking> adminBookingsTable;
-    @FXML private TableColumn<Booking, String> adminBookingIdColumn;
+    @FXML private TableColumn<Booking, Integer> adminBookingIdColumn;
     @FXML private TableColumn<Booking, String> adminBookingCustomerColumn;
     @FXML private TableColumn<Booking, String> adminBookingVehicleColumn;
     @FXML private TableColumn<Booking, String> adminBookingStartColumn;
     @FXML private TableColumn<Booking, String> adminBookingEndColumn;
     @FXML private TableColumn<Booking, String> adminBookingCostColumn;
     @FXML private TableColumn<Booking, String> adminBookingStatusColumn;
-    
+
     @FXML private Button adminLogoutButton;
 
+    // This method runs automatically when the window opens
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 1. Configure how the table columns read data
         setupVehiclesTable();
         setupCustomersTable();
         setupBookingsTable();
+
+        // 2. Load the actual data into the tables
         loadAllData();
     }
-    
+
+    // --- SETUP TABLES (Using PropertyValueFactory) ---
+    // PropertyValueFactory looks for "getVariableName" in your model classes
+
     private void setupVehiclesTable() {
-        adminVehicleIdColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(String.valueOf(data.getValue().getVehicleId())));
-        adminVehicleTypeColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getClass().getSimpleName()));
-        adminVehicleModelColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getModel()));
-        adminVehicleLicenseColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getLicenseNumber()));
-        adminVehicleRateColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty("$" + data.getValue().getDailyRate() + "/day"));
-        adminVehicleStatusColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getIsAvailable() ? "Available" : "Rented"));
+        // Looks for getVehicleId() in Vehicle.java
+        adminVehicleIdColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleId"));
+        // Looks for getType()
+        adminVehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        // Looks for getModel()
+        adminVehicleModelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
+        // Looks for getLicenseNumber()
+        adminVehicleLicenseColumn.setCellValueFactory(new PropertyValueFactory<>("licenseNumber"));
+        // Looks for getRateFormatted() - returns string like "$50.00/day"
+        adminVehicleRateColumn.setCellValueFactory(new PropertyValueFactory<>("rateFormatted"));
+        // Looks for getStatusFormatted() - returns "Available" or "Rented"
+        adminVehicleStatusColumn.setCellValueFactory(new PropertyValueFactory<>("statusFormatted"));
     }
-    
+
     private void setupCustomersTable() {
-        customerIdColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(String.valueOf(data.getValue().getCustomerId())));
-        customerNameColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getName()));
-        customerEmailColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getEmail()));
-        customerUsernameColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getAccount().getUsername()));
+        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        customerEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        // Requires a helper method getUsername() in Customer.java
+        customerUsernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
     }
-    
+
     private void setupBookingsTable() {
-        adminBookingIdColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(String.valueOf(data.getValue().getBookingId())));
-        adminBookingCustomerColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getCustomer().getName()));
-        adminBookingVehicleColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getBookedVehicle().getModel()));
-        adminBookingStartColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getStartDate().toString()));
-        adminBookingEndColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getEndDate().toString()));
-        adminBookingCostColumn.setCellValueFactory(data -> {
-            Booking booking = data.getValue();
-            long days = java.time.temporal.ChronoUnit.DAYS.between(
-                booking.getStartDate(), booking.getEndDate());
-            double cost = booking.getBookedVehicle().calculateRentalCost(
-                (int)days, booking.getBookedVehicle().getDailyRate());
-            return new SimpleStringProperty("$" + cost);
-        });
-        adminBookingStatusColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().isActive() ? "Active" : "Completed"));
+        adminBookingIdColumn.setCellValueFactory(new PropertyValueFactory<>("bookingId"));
+        // Requires a helper method getCustomerName() in Booking.java
+        adminBookingCustomerColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        // Requires a helper method getVehicleModel() in Booking.java (if not present, add it)
+        adminBookingVehicleColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleModel"));
+        adminBookingStartColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        adminBookingEndColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        adminBookingCostColumn.setCellValueFactory(new PropertyValueFactory<>("costFormatted"));
+        adminBookingStatusColumn.setCellValueFactory(new PropertyValueFactory<>("statusFormatted"));
     }
-    
+
+    // --- LOAD DATA ---
+
     private void loadAllData() {
         loadVehicles();
         loadCustomers();
         loadBookings();
     }
-    
+
     private void loadVehicles() {
-        ObservableList<Vehicle> vehicles = FXCollections.observableArrayList(Vehicle.allVehicles);
-        adminVehiclesTable.setItems(vehicles);
-    }
-    
-    private void loadCustomers() {
-        ObservableList<Customer> customers = FXCollections.observableArrayList(Customer.customers);
-        customersTable.setItems(customers);
-    }
-    
-    private void loadBookings() {
-        ObservableList<Booking> bookings = FXCollections.observableArrayList(Booking.bookings);
-        adminBookingsTable.setItems(bookings);
+        // Convert the ArrayList to an ObservableList so the UI can watch it
+        adminVehiclesTable.setItems(FXCollections.observableArrayList(Vehicle.allVehicles));
     }
 
+    private void loadCustomers() {
+        customersTable.setItems(FXCollections.observableArrayList(Customer.customers));
+    }
+
+    private void loadBookings() {
+        adminBookingsTable.setItems(FXCollections.observableArrayList(Booking.bookings));
+    }
+
+    // --- BUTTON HANDLERS ---
+
+    // Triggered when "Add Vehicle" button is clicked
     @FXML
     void handleAddVehicle(ActionEvent event) {
-        // Create add vehicle dialog
+        // Create a popup dialog
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Add New Vehicle");
         dialog.setHeaderText("Enter vehicle details:");
-        
-        // Create form fields
-        ComboBox<String> typeCombo = new ComboBox<>();
-        typeCombo.getItems().addAll("Car", "Bike", "Van");
-        typeCombo.setValue("Car");
-        
-        TextField modelField = new TextField();
-        modelField.setPromptText("Vehicle Model");
-        
-        TextField licenseField = new TextField();
-        licenseField.setPromptText("License Number");
-        
-        TextField rateField = new TextField();
-        rateField.setPromptText("Daily Rate");
-        
+
+        // Create input fields
+        ComboBox<String> typeCombo = new ComboBox<>(FXCollections.observableArrayList("Car", "Bike", "Van"));
+        typeCombo.setValue("Car"); // Default selection
+
+        TextField modelField = new TextField(); modelField.setPromptText("Vehicle Model");
+        TextField licenseField = new TextField(); licenseField.setPromptText("License Number");
+        TextField rateField = new TextField(); rateField.setPromptText("Daily Rate");
+
+        // Dynamic fields: Checkbox for Car/Bike, Text field for Van capacity
         CheckBox optionBox = new CheckBox("Automatic (Car) / Helmet (Bike)");
         TextField capacityField = new TextField();
         capacityField.setPromptText("Load Capacity (Van only)");
-        capacityField.setVisible(false);
-        
-        // Show/hide fields based on type
+        capacityField.setVisible(false); // Hidden by default
+
+        // Logic to toggle fields when Dropdown changes
         typeCombo.setOnAction(e -> {
-            String selected = typeCombo.getValue();
-            if ("Van".equals(selected)) {
-                optionBox.setVisible(false);
-                capacityField.setVisible(true);
-            } else {
-                optionBox.setVisible(true);
-                capacityField.setVisible(false);
-            }
+            boolean isVan = "Van".equals(typeCombo.getValue());
+            optionBox.setVisible(!isVan);      // Hide checkbox if Van
+            capacityField.setVisible(isVan);   // Show capacity if Van
         });
-        
-        VBox content = new VBox(10);
-        content.getChildren().addAll(
-            new Label("Vehicle Type:"), typeCombo,
-            new Label("Model:"), modelField,
-            new Label("License:"), licenseField,
-            new Label("Daily Rate ($):"), rateField,
-            optionBox, capacityField
+
+        // Organize fields vertically
+        VBox content = new VBox(10,
+                new Label("Type:"), typeCombo,
+                new Label("Model:"), modelField,
+                new Label("License:"), licenseField,
+                new Label("Rate ($):"), rateField,
+                optionBox, capacityField
         );
-        
+
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        
+
+        // Wait for user to click OK or Cancel
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
+                // Read inputs
                 String model = modelField.getText().trim();
                 String license = licenseField.getText().trim();
                 double rate = Double.parseDouble(rateField.getText().trim());
                 String type = typeCombo.getValue();
-                
-                if (model.isEmpty() || license.isEmpty()) {
-                    showAlert("Please fill all required fields!");
-                    return;
-                }
-                
+
+                // Validate inputs
+                if (model.isEmpty() || license.isEmpty()) throw new Exception("Empty fields");
+
                 // Check if license already exists
-                for (Vehicle v : Vehicle.allVehicles) {
-                    if (v.getLicenseNumber().equals(license)) {
-                        showAlert("License number already exists!");
-                        return;
-                    }
+                if (Vehicle.allVehicles.stream().anyMatch(v -> v.getLicenseNumber().equals(license))) {
+                    throw new Exception("License already exists");
                 }
-                
-                // Create vehicle based on type
-                if ("Car".equals(type)) {
-                    new Car(model, license, rate, optionBox.isSelected());
-                } else if ("Bike".equals(type)) {
-                    new Bike(model, license, rate, optionBox.isSelected());
-                } else if ("Van".equals(type)) {
-                    double capacity = Double.parseDouble(capacityField.getText().trim());
-                    new Van(model, license, rate, capacity);
-                }
-                
+
+                // Create the correct object based on type
+                if ("Car".equals(type)) new Car(model, license, rate, optionBox.isSelected());
+                else if ("Bike".equals(type)) new Bike(model, license, rate, optionBox.isSelected());
+                else if ("Van".equals(type)) new Van(model, license, rate, Double.parseDouble(capacityField.getText()));
+
+                // Success
                 showAlert("Vehicle added successfully!");
-                loadVehicles();
-                DataManager.saveAllData();
-                
+                loadVehicles(); // Refresh table
+                DataManager.saveAllData(); // Save to CSV immediately
+
             } catch (NumberFormatException e) {
-                showAlert("Please enter valid numbers for rate and capacity!");
+                showAlert("Invalid number format for Rate or Capacity.");
             } catch (Exception e) {
-                showAlert("Error adding vehicle: " + e.getMessage());
+                showAlert("Error: " + e.getMessage());
             }
         }
     }
 
+    // Triggered when "Remove Vehicle" button is clicked
     @FXML
     void handleRemoveVehicle(ActionEvent event) {
-        Vehicle selectedVehicle = adminVehiclesTable.getSelectionModel().getSelectedItem();
-        if (selectedVehicle == null) {
+        // Get the row currently selected by the user
+        Vehicle selected = adminVehiclesTable.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
             showAlert("Please select a vehicle to remove!");
             return;
         }
-        
-        // Check if vehicle is currently rented
-        if (!selectedVehicle.getIsAvailable()) {
-            showAlert("Cannot remove vehicle - it is currently rented!");
+
+        // Business Rule: Cannot delete a car that is currently out on rent
+        if (!selected.getIsAvailable()) {
+            showAlert("Cannot remove rented vehicle!");
             return;
         }
-        
-        // Confirmation dialog
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirm Removal");
-        confirmAlert.setHeaderText("Remove Vehicle");
-        confirmAlert.setContentText("Are you sure you want to remove:\n" + 
-                                   selectedVehicle.getModel() + " (" + selectedVehicle.getLicenseNumber() + ")?");
-        
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            Vehicle.allVehicles.remove(selectedVehicle);
-            showAlert("Vehicle removed successfully!");
-            loadVehicles();
-            DataManager.saveAllData();
+
+        // Ask for confirmation before deleting
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + selected.getModel() + "?");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            Vehicle.allVehicles.remove(selected); // Remove from list
+            loadVehicles(); // Refresh table
+            DataManager.saveAllData(); // Save to CSV immediately
         }
     }
 
@@ -257,24 +233,21 @@ public class AdminDashboardController implements Initializable {
         loadAllData();
     }
 
+    // Returns to the Login Screen
     @FXML
     void handleLogout(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("Dashboard.fxml"));
             Stage stage = (Stage) adminLogoutButton.getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
-            stage.setTitle("Car Rental Management System");
             stage.setMaximized(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
+    // Helper method to show simple popup messages
     private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Admin Panel");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        new Alert(Alert.AlertType.INFORMATION, message).showAndWait();
     }
 }

@@ -31,7 +31,7 @@ public class JavaFx extends Application {
         Scene scene = new Scene(root, 1200, 800);
         primaryStage.setTitle("Car Rental Management System");
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.setMaximized(true);
         primaryStage.show();
         

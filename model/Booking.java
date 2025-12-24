@@ -61,6 +61,9 @@ public class Booking {
     public String getStatusFormatted() {
         return isActive ? "Active" : "Completed";
     }
+    public String getCustomerName() { return customer.getName(); }
+
+
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }

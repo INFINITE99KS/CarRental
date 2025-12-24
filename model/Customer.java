@@ -32,7 +32,10 @@ public class Customer {
     public String getName() { return name; }
     public String getEmail() { return email; } 
     public Account getAccount() { return account; }
-    
+    public String getUsername() {
+        return account.getUsername();
+    }
+
 
     public void bookVehicle(Vehicle vehicle, LocalDate startDate, LocalDate endDate) 
             throws InvalidBookingException, VehicleNotAvailableException, InvalidDateException {
