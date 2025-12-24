@@ -64,7 +64,7 @@ public class CustomerDashboardController implements Initializable {
         vehicleModelColumn.setCellValueFactory(data -> 
             new SimpleStringProperty(data.getValue().getModel()));
         vehicleLicenseColumn.setCellValueFactory(data -> 
-            new SimpleStringProperty(data.getValue().getlicenseNumber()));
+            new SimpleStringProperty(data.getValue().getLicenseNumber()));
         vehicleRateColumn.setCellValueFactory(data -> 
             new SimpleStringProperty("$" + data.getValue().getDailyRate() + "/day"));
         vehicleStatusColumn.setCellValueFactory(data -> 
@@ -209,6 +209,7 @@ public class CustomerDashboardController implements Initializable {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Car Rental Management System");
+            stage.setMaximized(true);
         } catch (Exception e) {
             e.printStackTrace();
         }

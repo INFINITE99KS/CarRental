@@ -3,8 +3,8 @@ package model;
 public class Van extends Vehicle {
     private double loadCapacity;
 
-    public Van(String model, String liscenseNumber, double rate, double loadCapacity){
-            super(model, liscenseNumber, rate);
+    public Van(String modle, String liscenseNumber, double rate, double loadCapacity){
+            super(modle, liscenseNumber, rate);
             this.loadCapacity = loadCapacity;
         }
 

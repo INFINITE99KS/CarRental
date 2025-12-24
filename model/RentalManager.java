@@ -31,7 +31,7 @@ public class RentalManager {
     public Vehicle findVehicleById(int id, ArrayList<Vehicle> vehicles){
         if (vehicles.isEmpty()) return null;
 
-        // تصحيح: البحث بالـ ID الفعلي مش الـ index
+
         for(Vehicle vehicle : vehicles) {
             if (vehicle.getVehicleId() == id) {
                 return vehicle;

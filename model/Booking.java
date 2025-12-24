@@ -27,14 +27,14 @@ public class Booking {
         bookings.add(this);
     }
 
-    // --- التصحيح هنا: استخدام Getters والتأكد من التاريخ ---
+
     static void checkExpiry() {
         for (Booking book : bookings) {
-            // نتأكد إن الحجز لسه شغال وإن التاريخ عدى
+
             if (book.isActive && LocalDate.now().isAfter(book.getEndDate())) {
                 book.isActive = false;
                 
-                // نستخدم Getters عشان نضمن إننا بنكلم الكلاسات صح
+
                 book.getCustomer().returnVehicle(book.getBookedVehicle());
                 
                 System.out.println("Booking " + book.getBookingId() + " expired. Vehicle returned.");
@@ -50,7 +50,7 @@ public class Booking {
     public int getBookingId() { return bookingID; }
     public boolean isActive() { return isActive; }
 
-    // دالة للعرض
+
     public String displayInfo() {
         return ("Booking ID: " + bookingID +
                 "\n" + "Customer: " + customer.getName() + "\n"

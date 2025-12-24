@@ -82,6 +82,7 @@ public class DashboardController {
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Admin Dashboard - Car Rental System");
+            stage.setMaximized(true);
         } catch (Exception e) {
             statusLabel.setText("Error loading admin dashboard!");
             e.printStackTrace();
@@ -100,6 +101,7 @@ public class DashboardController {
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Customer Dashboard - " + customer.getName());
+            stage.setMaximized(true);
         } catch (Exception e) {
             statusLabel.setText("Error: File 'CustomerDashboard.fxml' not found!");
             e.printStackTrace();

@@ -17,7 +17,7 @@ public class Account {
         return this.password.equals(inputPass);
     }
     
-    // Getter للـ password عشان DataManager يقدر يحفظ البيانات
+
     public String getPassword() {
         return password;
     }

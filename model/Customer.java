@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import model.CustomExceptions.*;
 
 public class Customer {
     private int customerId;
@@ -11,7 +12,7 @@ public class Customer {
     
     private static int idCounter = 1;
     
-    // القائمة اللي بيتخزن فيها كل العملاء (عشان الجدول يشوفهم)
+
     public static ArrayList<Customer> customers = new ArrayList<>(); 
     
     ArrayList<Booking> bookings = new ArrayList<>();
@@ -22,31 +23,48 @@ public class Customer {
         this.email = email;
         this.account = account;
         
-        // بيضيف العميل لنفسه في القائمة أول ما يتنشأ
+
         customers.add(this); 
     }
 
-    // --- Getters (عشان الجدول يعرض البيانات) ---
+
     public int getCustomerId() { return customerId; }
     public String getName() { return name; }
     public String getEmail() { return email; } 
     public Account getAccount() { return account; }
     
-    // --- دالة الحجز ---
-    public void bookVehicle(Vehicle vehicle, LocalDate startDate, LocalDate endDate) throws Exception{
-        if(startDate.isBefore(LocalDate.now())) {
-            throw new Exception("Start date error: Cannot book in the past.");
+
+    public void bookVehicle(Vehicle vehicle, LocalDate startDate, LocalDate endDate) 
+            throws InvalidBookingException, VehicleNotAvailableException, InvalidDateException {
+        
+        // Validate inputs
+        if (vehicle == null) {
+            throw new InvalidBookingException("Vehicle cannot be null");
         }
+        if (startDate == null || endDate == null) {
+            throw new InvalidDateException("Start date and end date cannot be null");
+        }
+        if (startDate.isBefore(LocalDate.now())) {
+            throw new InvalidDateException("Start date cannot be in the past");
+        }
+        if (endDate.isBefore(startDate)) {
+            throw new InvalidDateException("End date cannot be before start date");
+        }
+        if (!vehicle.getIsAvailable()) {
+            throw new VehicleNotAvailableException("Vehicle is not available for booking");
+        }
+        
+        // Create booking if all validations pass
         bookings.add(new Booking(startDate, endDate, this, vehicle));
     }
 
-    // --- ⚠️ الدالة دي كانت ناقصة ومهمة جداً عشان Booking.java يشتغل ---
+
     public void returnVehicle(Vehicle vehicle) {
         vehicle.setIsAvailable(true);
         System.out.println("Vehicle returned by customer: " + this.name);
     }
     
-    // --- إضافة: دالة displayInfo عشان RentalManager يشتغل ---
+
     public String displayInfo() {
         return "ID: " + customerId + " | Name: " + name + " | Email: " + email;
     }

@@ -26,6 +26,7 @@ public class JavaFx extends Application {
         primaryStage.setTitle("Car Rental Management System");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
+        primaryStage.setMaximized(true);
         primaryStage.show();
         
         // Save data when closing

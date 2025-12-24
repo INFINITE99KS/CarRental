@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #1a1a1a, #2c2c2c); -fx-background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=3840&amp;q=80'); -fx-background-size: cover; -fx-background-position: center;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.CustomerDashboardController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #1a1a1a, #2c2c2c); -fx-background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=3840&amp;q=80'); -fx-background-size: cover; -fx-background-position: center;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.CustomerDashboardController">
    <top>
       <VBox style="-fx-background-color: rgba(0,0,0,0.7);" BorderPane.alignment="CENTER">
          <children>
@@ -35,9 +35,9 @@
       </VBox>
    </top>
    <center>
-      <VBox spacing="20.0" alignment="CENTER" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Available Vehicles" textFill="#333333">
+            <Label text="Available Vehicles" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
@@ -61,7 +61,7 @@
                   </Button>
                </children>
             </HBox>
-            <Label text="My Bookings" textFill="#333333">
+            <Label text="My Bookings" textFill="#fffafa">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>

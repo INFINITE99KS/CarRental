@@ -2,6 +2,7 @@ package model;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class DataManager {
     private static final String DATA_FOLDER = "data/";
@@ -95,7 +96,7 @@ public class DataManager {
                 writer.println(type + "|" + 
                               vehicle.getVehicleId() + "|" + 
                               vehicle.getModel() + "|" + 
-                              vehicle.getlicenseNumber() + "|" +
+                              vehicle.getlicenseNumver() + "|" + 
                               vehicle.getDailyRate() + "|" + 
                               vehicle.getIsAvailable());
                 
