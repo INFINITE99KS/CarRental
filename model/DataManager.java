@@ -96,7 +96,7 @@ public class DataManager {
                 writer.println(type + "|" + 
                               vehicle.getVehicleId() + "|" + 
                               vehicle.getModel() + "|" + 
-                              vehicle.getlicenseNumver() + "|" + 
+                              vehicle.getLicenseNumber() + "|" +
                               vehicle.getDailyRate() + "|" + 
                               vehicle.getIsAvailable());
                 
