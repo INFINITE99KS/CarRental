@@ -4,6 +4,9 @@
 out/
 gen/
 
+# User-generated Data
+data/
+
 # Ignore compiled Java files
 *.class
 
