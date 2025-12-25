@@ -2,62 +2,52 @@ package model;
 
 import java.util.ArrayList;
 
-// Abstract Class (OOP Concept: Abstraction)
-// This class serves as a "blueprint" for specific vehicle types (Car, Bike, Van).
-// It cannot be instantiated directly (you can't say "new Vehicle()").
-//
-// Implements Comparable<Vehicle> (Project Requirement: Generic Sort)
-// This interface allows us to sort a list of vehicles automatically (e.g., by price).
+
+// An abstract class, serves as the blueprint for our specific vehicle types (Car, Bike, Van).
+// Implements the Comparable interface in order to implement sorting, in which we sort by the daily rate.
 public abstract class Vehicle implements Comparable<Vehicle>, Taxable {
 
-    // Encapsulation: All fields are private to protect data integrity.
-    // They can only be accessed via public Getter/Setter methods.
+    // We successfully applied the concept of Encapsulation via the use of private data access modifiers,
+    // Which made us need to make getter and setter methods in order to access said data fields.
     private int vehicleId;
     private String licenseNumber;
     private String model;
     private double dailyRate;
     private boolean isAvailable;
 
-    // A static list acting as a global "In-Memory Database".
-    // Since it is static, it belongs to the class, not a specific object.
-    // All created vehicles are automatically added here.
+    // Added a list to keep track of all the vehicles created.
+    // We made it public static so we can access it wherever we wanted without having to instantiate our class.
     public static ArrayList<Vehicle> allVehicles = new ArrayList<>();
 
     // Constructor
     public Vehicle(String model, String licenseNumber, double rate) {
-        this.vehicleId = getNextId(); // Auto-generate unique ID
+        this.vehicleId = getNextId(); // generates a unique ID for each car.
         this.model = model;
         this.licenseNumber = licenseNumber;
-        this.isAvailable = true;      // Default to available when created
+        this.isAvailable = true;      // Defaults to available when created
         this.dailyRate = rate;
 
-        // Auto-Registration:
-        // Automatically adds this new vehicle to the global system list.
+        // Automatically adds this new vehicle to our array list.
         allVehicles.add(this);
     }
 
-    // Abstract Method (OOP Concept: Polymorphism)
-    // This method has NO body. It forces every subclass (Car, Bike, Van)
-    // to provide its own implementation of how to calculate cost.
+    // Returns the rental cost.
     public double calculateRentalCost(int days, double dailyRate) {
         return days * dailyRate*(1+getTaxRateFraction());
     }
 
-    // --- Encapsulation: Getters and Setters ---
+    // Getters and setters.
 
     public String getModel() { return model; }
     public String getLicenseNumber() { return licenseNumber; }
     public double getDailyRate() { return dailyRate; }
     public boolean getIsAvailable() { return isAvailable; }
     public int getVehicleId() { return vehicleId; }
-
-    // Used when removing a vehicle to re-order IDs (optional logic)
+    // Used when removing a vehicle to re-order IDs.
     public void setVehicleId(int id) { vehicleId = id; }
-
     // Used when a customer books or returns a vehicle
     public void setIsAvailable(boolean available) { this.isAvailable = available; }
 
-    // --- UI Helper Methods (Used by JavaFX TableView) ---
     // These methods format data specifically for the display columns.
 
     // Returns the class name (e.g., "Car", "Bike") to display in the "Type" column.
@@ -75,10 +65,7 @@ public abstract class Vehicle implements Comparable<Vehicle>, Taxable {
         return isAvailable ? "Available" : "Rented";
     }
 
-    // --- Interface Implementation (Project Requirement) ---
-    // This defines the "Natural Ordering" of vehicles.
-    // When Collections.sort(allVehicles) is called in AdminDashboard,
-    // this logic runs to sort them by Daily Rate (Cheapest -> Most Expensive).
+    // Comparable interface implementation
     @Override
     public int compareTo(Vehicle otherVehicle) {
         return Double.compare(this.dailyRate, otherVehicle.dailyRate);
@@ -89,8 +76,7 @@ public abstract class Vehicle implements Comparable<Vehicle>, Taxable {
         return("ID:" + vehicleId + "| Model: " + model + "| Rate: " + dailyRate);
     }
 
-    // --- ID Generator Logic ---
-    // Static counter to ensure every vehicle gets a unique ID (1, 2, 3...)
+    // ID generator.
     private static int idCounter = 0;
     private static int getNextId() {
         return idCounter++;

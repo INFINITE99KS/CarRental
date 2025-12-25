@@ -1,24 +1,16 @@
 package model;
 
-// Concrete Subclass (OOP Concept: Inheritance)
-// The Van class extends the abstract 'Vehicle' class.
-// It inherits common attributes (model, rate, availability) but adds its own specific data.
+// Successfully applies the inheritance pillar.
 public class Van extends Vehicle{
 
-    // Unique Attribute (Specialization)
-    // Only Vans track "Load Capacity". Cars and Bikes do not need this field.
+    // Our unique attribution for Van.
     private double loadCapacity;
 
     // Constructor
     public Van(String model, String licenseNumber, double rate, double loadCapacity) {
-        // Step 1: Call the Superclass Constructor (Vehicle)
-        // This executes the logic in Vehicle.java:
-        // - Generates the ID
-        // - Sets isAvailable = true
-        // - Adds this object to the global 'allVehicles' list
+        // Calls the parent class constructor to initialize the shared data fields.
         super(model, licenseNumber, rate);
-
-        // Step 2: Initialize Van-specific attributes
+        // Initializing the custom data fields.
         this.loadCapacity = loadCapacity;
     }
 
@@ -28,10 +20,13 @@ public class Van extends Vehicle{
         return loadCapacity;
     }
 
+    // For our table view in CustomerDashboard.
     public String getTaxRate()
     {
         return "15%";
     }
+
+    // Overriding our implemented interface of "Taxable".
     public double getTaxRateFraction()
     {
         return vanTax;
