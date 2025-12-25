@@ -1,89 +1,66 @@
-# 🚗💨 Car Rental Management System
+# 🏎️ Car Rental Management System (JavaFX)
 
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-![JavaFX](https://img.shields.io/badge/JavaFX-UI_Toolkit-blue?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Completed-green?style=for-the-badge)
-
-> **"Rent a car, enjoy the ride!"** 🌟  
-> A robust, Object-Oriented desktop application built for the **CSE 331s Advanced Computer Programming** course.
+A high-performance desktop application built with Java 17+ and JavaFX. Developed as a core project for **CSE 331s Advanced Computer Programming**, this system demonstrates the practical application of design patterns, custom data persistence, and deep OOP principles.
 
 ---
 
-## 📖 About The Project
+## 🛠 Project Overview
 
-Welcome to the **Car Rental Management System**! This application streamlines the process of renting vehicles. It features a dual-interface design: one for **Administrators** to manage the fleet, and one for **Customers** to browse and book their dream rides.
+This isn't just a basic CRUD app. It’s a multi-role management system designed to handle real-world rental logic—from automated tax calculations to "auto-returning" expired rentals.
 
-We built this using strict **OOP principles**, ensuring the code is clean, modular, and scalable. Plus, it remembers everything you do thanks to our custom CSV data persistence layer! 💾
+### The "Brains" of the System:
+* **Relational CSV Persistence:** A custom `DataManager` serves as the database. It doesn't just save text; it reconstructs complex object relationships (linking Bookings to specific Vehicles and Customers) on startup.
+* **Polymorphic Tax Engine:** Using a `Taxable` interface, the system dynamically calculates costs based on the vehicle type (30% for Cars, 15% for Vans, 10% for Bikes).
+* **Defensive Error Handling:** Instead of generic crashes, the app uses a custom suite of exceptions (`InvalidDateException`, `VehicleNotAvailableException`, etc.) to guide the user.
 
----
 
-## ✨ Key Features
-
-### 👑 For Admins
-* **Fleet Management:** Add new Cars, Bikes, or Vans with specific details (e.g., Helmet included? Automatic?).
-* **Live Updates:** Remove old vehicles or update stock instantly.
-* **Business Intelligence:** View all active bookings and customer history.
-* **Secure Access:** Password-protected admin dashboard.
-
-### 👤 For Customers
-* **Smart Sorting:** Vehicles are automatically sorted by **price (low to high)** so you find the best deals first! 💸
-* **Easy Booking:** Pick your dates, confirm your ride, and go.
-* **Booking History:** View past trips and cancel active reservations if plans change.
-* **Real-Time Status:** You can't book a car that's already taken! (Thanks to our `VehicleNotAvailableException`).
 
 ---
 
-## 🛠️ Tech Stack & Concepts
+## 🚀 Core Functionalities
 
-We didn't just write code; we engineered a solution using advanced concepts:
+### 👑 Admin Control
+- **Dynamic Fleet Management:** Add specialized vehicles with unique traits (e.g., Load Capacity for Vans, Transmission for Cars).
+- **Fleet Integrity:** A safety-lock prevents admins from deleting vehicles that are currently "Rented."
+- **Financial Tracking:** Real-time revenue aggregation based on historical transaction data.
 
-* **Language:** Java 17+
-* **GUI Framework:** JavaFX (FXML)
-* **Architecture:** Model-View-Controller (MVC)
-* **OOP Pillars:**
-    * 🧩 **Polymorphism:** `Vehicle` behaves differently as `Car`, `Bike`, or `Van`.
-    * 🔒 **Encapsulation:** Private fields with secure Getters/Setters.
-    * 🧬 **Inheritance:** All vehicle types inherit from the abstract `Vehicle` class.
-    * 📦 **Abstraction:** `calculateRentalCost()` is abstract, forcing specific implementation.
-* **Data Persistence:** Custom File I/O using CSV files (Excel compatible!).
+### 👤 Customer Features
+- **Price-Optimized Browsing:** Implements `Comparable<Vehicle>` to automatically sort the fleet from cheapest to most expensive.
+- **Reservation Workflow:** Users pick dates, the system validates availability, calculates total cost (rate + tax), and generates a unique `BookingID`.
+- **Auto-Maintenance:** On launch, the system checks `LocalDate` against active bookings. If a rental is past due, it automatically marks the vehicle as "Available."
 
 ---
 
-## 📸 Screenshots
+## 🏗 System Architecture
 
-| **Login Screen** | **Admin Dashboard** |
-|:---:|:---:|
-| <img src="https://via.placeholder.com/400x300?text=Login+Screen" width="400"> | <img src="https://via.placeholder.com/400x300?text=Admin+Dashboard" width="400"> |
+The app follows the **MVC (Model-View-Controller)** pattern to separate the UI (FXML) from the heavy-lifting logic.
 
-| **Customer Dashboard** | **Booking Dialog** |
-|:---:|:---:|
-| <img src="https://via.placeholder.com/400x300?text=Customer+View" width="400"> | <img src="https://via.placeholder.com/400x300?text=Booking+Popup" width="400"> |
+### OOP Pillars Applied:
+- **Abstraction:** The `Vehicle` class acts as an abstract blueprint for all fleet types.
+- **Composition:** `Customer` objects "own" an `Account` object, separating login security from user profile data.
+- **Singleton Pattern:** The `DataManager` is implemented as a Singleton to ensure a single point of truth for file I/O operations.
+
+
 
 ---
 
 ## 📂 Project Structure
 
-Here is a peek under the hood at how we organized our files:
-
 ```text
 src/
-├── 📦 model/            # The Brains (Logic & Data)
-│   ├── Account.java
-│   ├── Vehicle.java (Abstract)
-│   ├── Car.java / Bike.java / Van.java
-│   ├── Customer.java
-│   ├── Booking.java
-│   ├── DataManager.java (CSV Handling)
+├── model/               # The Logic Layer
+│   ├── Taxable.java     // Financial interface
+│   ├── Vehicle.java     // Abstract base class
+│   ├── Car/Bike/Van.java // Specialized implementations
+│   ├── DataManager.java // Singleton I/O handler
 │   └── CustomExceptions.java
 │
-├── 🖥️ UI/               # The Beauty (Visuals & Controllers)
-│   ├── JavaFx.java (Main Entry)
-│   ├── DashboardController.java (Login)
-│   ├── AdminDashboardController.java
-│   ├── CustomerDashboardController.java
-│   └── FXML Files (.fxml)
+├── UI/                  # The Presentation Layer
+│   ├── JavaFx.java      // Entry point
+│   ├── *Controller.java // Scene logic
+│   └── *.fxml           // View layouts
 │
-└── 📁 data/             # The Memory (Saved CSVs)
+└── data/                # The Persistence Layer (Auto-generated)
     ├── customers.csv
     ├── vehicles.csv
     └── bookings.csv
