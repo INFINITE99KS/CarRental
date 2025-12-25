@@ -1,6 +1,5 @@
-# 🏎️ Car Rental Management System (JavaFX)
+# 🚗💨 Car Rental Management System
 
-A high-performance desktop application built with Java 17+ and JavaFX. Developed as a core project for **CSE 331s Advanced Computer Programming**, this system demonstrates the practical application of design patterns, custom data persistence, and deep OOP principles.
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 
 ![JavaFX](https://img.shields.io/badge/JavaFX-UI_Toolkit-blue?style=for-the-badge)
