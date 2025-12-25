@@ -1,28 +1,20 @@
 package model;
 
-// Concrete Subclass (OOP Concept: Inheritance)
-// The 'Bike' class inherits all the common attributes (ID, Model, License, Rate)
-// from the abstract 'Vehicle' class but adds bike-specific features.
+// Concrete Subclass from the abstract vehicle
 public class Bike extends Vehicle{
 
-    // Unique Attribute (Specialization)
-    // Only Bikes track whether a helmet is provided.
-    // This distinguishes it from Cars (isAutomatic) and Vans (loadCapacity).
+    // Unique datafield for the bike from the car and van
     private boolean helmetInclude;
 
     // Constructor
     public Bike(String modle, String liscenseNumber, double rate, boolean helmetInclude){
-        // Step 1: Call the Superclass Constructor
-        // This passes the core data up to the 'Vehicle' parent class to:
-        // - Generate the unique ID
-        // - Add the bike to the global 'allVehicles' list
-        // - Set default availability to 'true'
+        //Calling the Superclass Constructor to initialize the model, license and rate
         super(modle, liscenseNumber, rate);
 
         // Step 2: Initialize Bike-specific attributes
         this.helmetInclude = helmetInclude;
     }
-
+    // getters for getting tax rate as a string and as a double
     public String getTaxRate()
     {
         return "10%";
@@ -31,11 +23,7 @@ public class Bike extends Vehicle{
     {
         return bikeTax;
     }
-
-    // Getter for the specific attribute.
-    // Used by:
-    // 1. DataManager: To save this specific detail to the CSV file.
-    // 2. AdminDashboard: To display "Helmet: Yes/No" in the UI.
+    // getter for if the helmet if included
     public boolean getHelmetInclude(){
         return helmetInclude;
     }

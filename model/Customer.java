@@ -4,48 +4,35 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import model.CustomExceptions.*;
 
-// Customer Entity Class
-// Represents a client in the rental system.
-//
-// Key OOP Concept: Composition
-// Instead of inheriting from Account, the Customer "HAS-A" Account.
-// This separates the Login Credentials (Account) from the Profile Data (Customer).
+// Customer Entity Class which represents a client in the rental system.
 public class Customer {
 
-    // --- Instance Variables ---
+    // Data fields for the customer id, name and email and account on the system
     private int customerId;
     private String name;
     private String email;
-
-    // Composition: Links this profile to a specific login account (Username/Password)
     private Account account;
 
-    // --- Data Storage ---
-
-    // 1. Global Customer Database (Static)
-    // Stores ALL customers in the system. Used for login checks and Admin viewing.
+    // a static arraylist (static database) to store all the customers in the system
     public static ArrayList<Customer> customers = new ArrayList<>();
 
-    // 2. Personal Booking History (Instance)
-    // Stores only the bookings made by THIS specific customer.
+    //Personal Booking History as a static arraylist
     ArrayList<Booking> bookings = new ArrayList<>();
 
     // Static counter for Auto-Incrementing IDs (1, 2, 3...)
     private static int idCounter = 1;
 
-    // Constructor
+    // Constructor to initialize datafields and adding the customer to the database
     public Customer(String name, String email, Account account){
         this.customerId = idCounter++; // Assign unique ID and increment
         this.name = name;
         this.email = email;
         this.account = account;
-
-        // Automatic Registration:
         // When a new Customer is created, immediately add them to the global system list.
         customers.add(this);
     }
 
-    // --- Getters ---
+    // Getters for the id, name, email, account on our system
     public int getCustomerId() { return customerId; }
     public String getName() { return name; }
     public String getEmail() { return email; }
@@ -56,45 +43,34 @@ public class Customer {
         return account.getUsername();
     }
 
-    // --- Core Business Logic: Making a Reservation ---
-    //
-    // This method demonstrates the "Exception Handling" requirement.
-    // Instead of returning false for errors, it "throws" specific exceptions
-    // that the UI Layer (Controller) must catch and handle.
+    // Making a Booking for the customer
+    // This method demonstrates the "Exception Handling" requirement as it throws specific exceptions
     public void bookVehicle(Vehicle vehicle, LocalDate startDate, LocalDate endDate)
             throws InvalidBookingException, VehicleNotAvailableException, InvalidDateException {
 
-        // 1. Validation Chain
-        // We check every possible error condition BEFORE creating the booking.
-
+        // We check every possible error condition before creating the booking to make sure it's valid
         if (vehicle == null) {
             throw new InvalidBookingException("Vehicle cannot be null");
         }
-
+        //start date and end date can't be null
         if (startDate == null || endDate == null) {
             throw new InvalidDateException("Start date and end date cannot be null");
         }
-
-        // Business Rule: Cannot book in the past
+        //  start date can't be  in the past
         if (startDate.isBefore(LocalDate.now())) {
             throw new InvalidDateException("Start date cannot be in the past");
         }
-
-        // Business Rule: End date must be after Start date
+        //End date must be after Start date
         if (endDate.isBefore(startDate)) {
             throw new InvalidDateException("End date cannot be before start date");
         }
-
-        // Business Rule: Vehicle must be available
+        // Vehicle must be available not booked by another customer
         if (!vehicle.getIsAvailable()) {
             throw new VehicleNotAvailableException("Vehicle is not available for booking");
         }
 
-        // 2. Create Booking
-        // If all checks pass, we proceed. The Booking constructor will automatically
-        // mark the vehicle as 'unavailable'.
+        //Create Booking after all checks have passed
         Booking newBooking = new Booking(startDate, endDate, this, vehicle);
-
         // Add to this customer's personal history
         bookings.add(newBooking);
     }

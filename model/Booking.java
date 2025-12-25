@@ -4,65 +4,53 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 // The Booking Class (Transaction Entity)
-// This class represents the "Rental Agreement" between a Customer and a Vehicle.
-// It tracks the dates, the status (Active/Completed), and calculates the final cost.
 public class Booking {
 
-    // --- Instance Variables ---
+    //Data fields for start and end dates
     private LocalDate startDate;
     private LocalDate endDate;
-
-    // Association: Linking the Booking to the specific User and Object
+    // Data fields for the customer that made the booking and the booked vehicle
     private Customer customer;
     private Vehicle bookedVehicle;
-
+    //Data fields to detect if the booking is active and for the bookingid
     private boolean isActive; // True = Currently rented out, False = Returned
     private int bookingID;
 
-    // Global Booking History (Static Database)
-    // Stores every booking ever made in the system.
-    // Used by DataManager to save history and by AdminDashboard to display reports.
+    // a static arraylist (Static Database) that stores all booking made
     public static ArrayList<Booking> bookings = new ArrayList<>();
 
-    // Constructor
+    // Constructor to initialize all data fields
     public Booking(LocalDate startDate, LocalDate endDate, Customer customer, Vehicle bookedVehicle) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.customer = customer;
         this.bookedVehicle = bookedVehicle;
-
-        // CRITICAL LOGIC: Side Effect
-        // When a booking is created, we MUST immediately mark the car as unavailable
-        // so no one else can book it for the same dates.
+        // CRITICAL LOGIC: to make the vehicle not available for anyone to book as it's already booked
         bookedVehicle.setIsAvailable(false);
-
+        //setting the booking to active and giving it an id
         this.isActive = true;
         this.bookingID = getNextId();
-
-        // Auto-Add to global history
+        // Auto-Add to static arraylist which would add it to the database too
         bookings.add(this);
     }
 
-    // --- System Maintenance ---
-    // This method is called by JavaFx.java at startup.
-    // It scans all bookings to see if any rentals ended "Yesterday" or earlier.
+    // a method to check if the end date of the booking has come yet and therefore could make the booking
+    // completed and the vehicle would be available again
     public static void checkExpiry() {
         for (Booking book : bookings) {
             // Logic: If the booking is still marked 'Active' BUT the end date has passed...
             if (book.isActive() && LocalDate.now().isAfter(book.getEndDate())) {
-
-                // 1. Mark booking as closed
+                // 1. Mark booking as completed
                 book.setIsActive(false);
-
                 // 2. Free up the vehicle so others can rent it
                 book.getCustomer().returnVehicle(book.getBookedVehicle());
-
                 System.out.println("Booking " + book.getBookingId() + " expired and was auto-returned.");
             }
         }
     }
 
-    // --- Standard Getters ---
+    // getters for start date, end date, the booked vehicle, the customer which made the booking
+    // also the booking id and if the booking is active
     public LocalDate getStartDate() { return startDate; }
     public LocalDate getEndDate() { return endDate; }
     public Vehicle getBookedVehicle() { return bookedVehicle; }
@@ -70,19 +58,13 @@ public class Booking {
     public int getBookingId() { return bookingID; }
     public boolean isActive() { return isActive; }
 
-    // --- UI Helper Getters (For TableView) ---
-    // JavaFX Tables often need strings, not Objects.
-    // These wrapper methods allow the "Vehicle" column to show "Toyota Corolla"
-    // instead of "model.Car@7ad041f3".
-
+    // --- UI Helper Getters (For TableView) as JavaFX Tables need strings, not Objects
     public String getVehicleModel() {
         return bookedVehicle.getModel();
     }
-
     public String getCustomerName() {
         return customer.getName();
     }
-
     public String getStatusFormatted() {
         return isActive ? "Active" : "Completed";
     }
@@ -117,8 +99,7 @@ public class Booking {
                 + endDate);
     }
 
-    // --- ID Generator ---
-    // Ensures every booking gets a unique number (1, 2, 3...)
+    //ID Generator to Ensures every booking gets a unique number (1, 2, 3...)
     private static int idCounter = 1;
     private static int getNextId() {
         return idCounter++;
