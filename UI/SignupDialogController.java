@@ -40,7 +40,7 @@ public class SignupDialogController {
         String password = signupPasswordField.getText().trim();
         String confirmPassword = confirmPasswordField.getText().trim();
 
-        // 2. Validation Checks
+        // Validation Checks
 
         // Ensure no fields are left empty
         if (name.isEmpty() || email.isEmpty() || username.isEmpty() ||
@@ -61,7 +61,7 @@ public class SignupDialogController {
             return;
         }
 
-        // 3. Duplicate Username Check
+        // Duplicate Username Check
         // Loop through existing customers to ensure username is unique
         for (Customer customer : Customer.customers) {
             if (customer.getAccount().getUsername().equals(username)) {
@@ -70,7 +70,7 @@ public class SignupDialogController {
             }
         }
 
-        // 4. Create the Account and Customer objects
+        // Create the Account and Customer objects
         try {
             // Create Account with role 'c' for Customer (Admin uses 'A')
             Account newAccount = new Account(username, password, 'c');
@@ -84,7 +84,7 @@ public class SignupDialogController {
             // Show success message
             showAlert("Account created successfully!\nYou can now login with username: " + username);
 
-            // 6. Close the popup window
+            // Close the popup window
             Stage stage = (Stage) createAccountButton.getScene().getWindow();
             stage.close();
 

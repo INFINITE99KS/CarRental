@@ -13,8 +13,6 @@ import javafx.stage.Stage;
 import model.*;
 
 // Controller class for the Main Login Dashboard.
-// This is the first screen the user sees. It handles authentication (Login)
-// and navigation to the Sign-Up screen.
 public class DashboardController {
 
     // UI Components linked to FXML
@@ -22,23 +20,23 @@ public class DashboardController {
     @FXML private PasswordField passwordField;
     @FXML private Button loginButton;
     @FXML private Button signupButton;
-    @FXML private Label statusLabel; // Used to show error messages (e.g., "Invalid Password")
+    @FXML private Label statusLabel; // Used to show error messages .
 
     // Logic for the "Login" button.
     // Determines if the user is an Admin or a Customer and routes them accordingly.
     @FXML
     void handleLogin(ActionEvent event) {
-        // 1. Get raw input from text fields
+        // Get raw input from text fields
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
 
-        // 2. Basic Validation: Ensure fields aren't empty
+        // Basic Validation: Ensure fields aren't empty
         if (username.isEmpty() || password.isEmpty()) {
             statusLabel.setText("Please enter username and password!");
             return;
         }
 
-        // 3. Check for Admin Login
+        // Check for Admin Login
         // Note: Admin credentials are hardcoded for simplicity in this project context.
         if (username.equals("admin") && password.equals("1234")) {
             statusLabel.setText("Admin Login Success. Loading Admin Dashboard...");
@@ -46,7 +44,7 @@ public class DashboardController {
             return; // Exit method so we don't check for customers
         }
 
-        // 4. Check for Customer Login
+        // Check for Customer Login
         // We iterate through the global list of customers loaded from the CSV.
         for (Customer customer : Customer.customers) {
             // Check username AND verify password using the Account method
@@ -61,7 +59,7 @@ public class DashboardController {
             }
         }
 
-        // 5. If loop finishes without finding a match:
+        // If loop finishes without finding a match:
         statusLabel.setText("Invalid username or password!");
     }
 
@@ -82,7 +80,7 @@ public class DashboardController {
         }
     }
 
-    // Helper Method: Switches the scene to the Admin Dashboard
+    // Switches the scene to the Admin Dashboard
     private void loadAdminDashboard() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminDashboard.fxml"));
@@ -101,21 +99,21 @@ public class DashboardController {
         }
     }
 
-    // Helper Method: Switches the scene to the Customer Dashboard
-    // IMPORTANT: This method passes data (the logged-in customer) to the next controller.
+    // Switches the scene to the Customer Dashboard
+    // This method passes data (the logged-in customer) to the next controller.
     private void loadCustomerDashboard(Customer customer) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("CustomerDashboard.fxml"));
             Parent root = loader.load();
 
-            // 1. Get access to the controller of the new screen
+            // Get access to the controller of the new screen
             CustomerDashboardController controller = loader.getController();
 
-            // 2. Pass the specific customer object to it
+            // Pass the specific customer object to it
             // This ensures the dashboard knows *who* is logged in.
             controller.setCustomer(customer);
 
-            // 3. Switch the scene
+            // Switch the scene
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(new Scene(root, 1200, 800));
             stage.setTitle("Customer Dashboard - " + customer.getName());

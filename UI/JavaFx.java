@@ -8,31 +8,24 @@ import javafx.stage.Stage;
 import model.*;
 
 // Main Entry Point for the Car Rental Management System.
-// This class extends the standard JavaFX Application class and handles the
-// application lifecycle (startup, scene loading, and shutdown).
 public class JavaFx extends Application {
 
     // The main entry point for JavaFX applications.
-    // This method is called automatically by the JavaFX runtime after 'launch()'
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        // 1. DATA PERSISTENCE - LOAD
         // Before showing any UI, we load the saved data from CSV files.
         // This ensures the system resumes exactly where the user left off.
         DataManager.loadAllData();
 
-        // 2. BUSINESS LOGIC - MAINTENANCE
         // Check for any bookings that have expired (where today > end date).
         // This automatically marks them as completed and returns the vehicles.
         Booking.checkExpiry();
 
-        // 3. DATA PERSISTENCE - SYNC
         // Save the updated state immediately (in case checkExpiry made changes).
         DataManager.saveAllData();
 
-        // 4. INITIAL SEEDING (First Run Check)
-        // If the system is empty (e.g., first time running the app),
+        // If the system is empty (for example, first time running the app),
         // we populate it with default data so the user isn't staring at a blank screen.
         if (Vehicle.allVehicles.isEmpty()) {
             setupInitialData();
@@ -40,7 +33,6 @@ public class JavaFx extends Application {
             DataManager.saveAllData();
         }
 
-        // 5. UI LOADING
         // Load the Login Screen (Dashboard.fxml)
         Parent root = FXMLLoader.load(getClass().getResource("Dashboard.fxml"));
 
@@ -52,8 +44,7 @@ public class JavaFx extends Application {
         primaryStage.setMaximized(true); // Start full screen
         primaryStage.show();
 
-        // 6. SHUTDOWN HOOK
-        // Ensure data is saved automatically when the user clicks the "X" button.
+        // Ensure data is saved automatically when the user exits.
         primaryStage.setOnCloseRequest(e -> {
             System.out.println("Application closing... Saving data.");
             DataManager.saveAllData();

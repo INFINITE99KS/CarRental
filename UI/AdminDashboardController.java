@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 // Handles Vehicle management, Customer viewing, and Booking history
 public class AdminDashboardController implements Initializable {
 
-    // --- Vehicles Tab Components linked to FXML ---
+    // Vehicles Tab Components linked to FXML
     @FXML private TableView<Vehicle> adminVehiclesTable;
     @FXML private TableColumn<Vehicle, Integer> adminVehicleIdColumn;
     @FXML private TableColumn<Vehicle, String> adminVehicleTypeColumn;
@@ -34,14 +34,14 @@ public class AdminDashboardController implements Initializable {
     @FXML private Button addVehicleButton;
     @FXML private Button removeVehicleButton;
 
-    // --- Customers Tab Components linked to FXML ---
+    // Customers Tab Components linked to FXML
     @FXML private TableView<Customer> customersTable;
     @FXML private TableColumn<Customer, Integer> customerIdColumn;
     @FXML private TableColumn<Customer, String> customerNameColumn;
     @FXML private TableColumn<Customer, String> customerEmailColumn;
     @FXML private TableColumn<Customer, String> customerUsernameColumn;
 
-    // --- Bookings Tab Components linked to FXML ---
+    // Bookings Tab Components linked to FXML
     @FXML private TableView<Booking> adminBookingsTable;
     @FXML private TableColumn<Booking, Integer> adminBookingIdColumn;
     @FXML private TableColumn<Booking, String> adminBookingCustomerColumn;
@@ -57,17 +57,17 @@ public class AdminDashboardController implements Initializable {
     // This method runs automatically when the window opens
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 1. Configure how the table columns read data
+        // Configure how the table columns read data
         setupVehiclesTable();
         setupCustomersTable();
         setupBookingsTable();
         handleRevenue();
 
-        // 2. Load the actual data into the tables
+        // Load the actual data into the tables
         loadAllData();
     }
 
-    // --- SETUP TABLES (Using PropertyValueFactory) ---
+    // Setting up tables using setCellValueFactory
     // PropertyValueFactory looks for "getVariableName" in your model classes
 
     private void setupVehiclesTable() {
@@ -107,7 +107,7 @@ public class AdminDashboardController implements Initializable {
         adminBookingStatusColumn.setCellValueFactory(new PropertyValueFactory<>("statusFormatted"));
     }
 
-    // --- LOAD DATA ---
+    // Loading data.
 
     private void loadAllData() {
         loadVehicles();
@@ -129,7 +129,7 @@ public class AdminDashboardController implements Initializable {
         adminBookingsTable.setItems(FXCollections.observableArrayList(Booking.bookings));
     }
 
-    // --- BUTTON HANDLERS ---
+    // Handling buttons.
 
     // Triggered when "Add Vehicle" button is clicked
     @FXML
@@ -147,7 +147,7 @@ public class AdminDashboardController implements Initializable {
         TextField licenseField = new TextField(); licenseField.setPromptText("License Number");
         TextField rateField = new TextField(); rateField.setPromptText("Daily Rate");
 
-        // Dynamic fields: Checkbox for Car/Bike, Text field for Van capacity
+        // Checkbox for Car/Bike, Text field for Van capacity
         CheckBox optionBox = new CheckBox("Automatic (Car) / Helmet (Bike)");
         TextField capacityField = new TextField();
         capacityField.setPromptText("Load Capacity (Van only)");

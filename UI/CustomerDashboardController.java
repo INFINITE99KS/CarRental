@@ -73,7 +73,7 @@ public class CustomerDashboardController implements Initializable {
 
 
     // Configures the Vehicle table columns.
-    // Usage: new PropertyValueFactory<>("model") looks for the method getModel() in Vehicle class.
+    // new PropertyValueFactory<>("model") looks for the method getModel() in Vehicle class.
     private void setupVehiclesTable() {
         vehicleIdColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleId"));
         vehicleTypeColumn.setCellValueFactory(new PropertyValueFactory<>("type")); // Looks for getType()
@@ -86,7 +86,7 @@ public class CustomerDashboardController implements Initializable {
     }
 
      // Configures the Booking table columns.
-     // Note: The properties (like "vehicleModel") must exist as getters in the Booking class.
+     // The properties (like "vehicleModel") must exist as getters in the Booking class.
     private void setupBookingsTable() {
         bookingIdColumn.setCellValueFactory(new PropertyValueFactory<>("bookingId"));
         bookingVehicleColumn.setCellValueFactory(new PropertyValueFactory<>("vehicleModel"));
@@ -128,10 +128,10 @@ public class CustomerDashboardController implements Initializable {
      // Handles selection validation, user input dialog, and saving the booking.
     @FXML
     void handleBookVehicle(ActionEvent event) {
-        // 1. Get the row the user clicked on
+        // Get the row the user clicked on
         Vehicle selectedVehicle = vehiclesTable.getSelectionModel().getSelectedItem();
 
-        // 2. Validation Checks
+        // Validation Checks
         if (selectedVehicle == null) {
             showAlert("Please select a vehicle to book!");
             return;
@@ -142,17 +142,17 @@ public class CustomerDashboardController implements Initializable {
             return;
         }
 
-        // 3. Create a Popup Dialog to ask for rental duration
+        // Create a Popup Dialog to ask for rental duration
         TextInputDialog dialog = new TextInputDialog("1"); // Default value is "1"
         dialog.setTitle("Book Vehicle");
         dialog.setHeaderText("Book " + selectedVehicle.getModel());
         dialog.setContentText("Enter number of days:");
 
-        // 4. Show the dialog and wait for response
+        // Show the dialog and wait for response
         // Optional<String> handles the case where user might click "Cancel" (returning empty)
         Optional<String> result = dialog.showAndWait();
 
-        // 5. If user clicked OK (result is present)
+        // If user clicked OK (result is present)
         if (result.isPresent()) {
             try {
                 // Parse the input string to a number
@@ -201,7 +201,7 @@ public class CustomerDashboardController implements Initializable {
     void handleCancelBooking(ActionEvent event) {
         Booking selectedBooking = bookingsTable.getSelectionModel().getSelectedItem();
 
-        // 1. Validation Checks
+        // Validation Checks
         if (selectedBooking == null) {
             showAlert("Please select a booking to cancel!");
             return;
@@ -212,7 +212,7 @@ public class CustomerDashboardController implements Initializable {
             return;
         }
 
-        // 2. Confirmation Dialog (Are you sure?)
+        // Confirmation Dialog (Are you sure?)
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Cancel Booking");
         confirmAlert.setHeaderText("Cancel Booking Confirmation");
@@ -223,7 +223,7 @@ public class CustomerDashboardController implements Initializable {
 
         Optional<ButtonType> result = confirmAlert.showAndWait();
 
-        // 3. If User clicked OK
+        // If User clicked OK
         if (result.isPresent() && result.get() == ButtonType.OK) {
 
             // Make the car available again
